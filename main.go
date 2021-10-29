@@ -5,8 +5,7 @@ import (
 )
 
 func main() {
-	a := 2
-	b := &a
-	*b = 2000
-	fmt.Println(a)
+	names := []string{"chris", "gardner"}
+	names = append(names, "dali", "van", "picasso")
+	fmt.Println(names)
 }
