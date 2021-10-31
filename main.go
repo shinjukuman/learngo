@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -27,7 +29,26 @@ func main() {
 		extractedJobs := getPage(i)
 		jobs = append(jobs, extractedJobs...)
 	}
-	fmt.Println(jobs)
+	writeJobs(jobs)
+}
+
+func writeJobs(jobs []extractedJob) {
+	file, err := os.Create("jobs.csv")
+	checkErr(err)
+
+	w := csv.NewWriter(file)
+	defer w.Flush()
+
+	headers := []string{"ID", "TITLE", "COMPANYNAME", "LOCATION", "SUMMARY"}
+	wErr := w.Write(headers)
+	checkErr(wErr)
+
+	for _, job := range jobs {
+		jobSlice := []string{job.id, job.title, job.companyName, job.location, job.summary}
+		jwErr := w.Write(jobSlice)
+		checkErr(jwErr)
+	}
+	fmt.Println("Done, extracted", len(jobs))
 }
 
 func getPage(page int) []extractedJob {
