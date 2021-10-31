@@ -1,42 +1,36 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-
-	"github.com/chrisgardner402/learngo/mydict"
+	"net/http"
 )
 
+var errRequestFailed = errors.New("request failed")
+
 func main() {
-	dictionary := mydict.Dictionary{}
-	// update success
-	word := "Hello"
-	dictionary.Add(word, "First")
-	err1 := dictionary.Update(word, "Second")
-	if err1 != nil {
-		fmt.Println(err1)
+	urls := []string{
+		"https://www.airbnb.com/",
+		"https://www.google.com/",
+		"https://www.amazon.com/",
+		"https://www.reddit.com/",
+		"https://www.google.com/",
+		"https://soundcloud.com/",
+		"https://www.facebook.com/",
+		"https://www.instagram.com/",
 	}
-	def, _ := dictionary.Search(word)
-	if def != "" {
-		println(def)
-		fmt.Println("[update success]")
+	for _, url := range urls {
+		hitURL(url)
 	}
-	// update fail
-	err2 := dictionary.Update("Hi", "Second")
-	if err2 != nil {
-		fmt.Println(err2)
-		fmt.Println("[update fail]")
+}
+
+func hitURL(url string) error {
+	fmt.Println("Checkin:", url)
+	resp, err := http.Get(url)
+	if err != nil || resp.StatusCode >= 400 {
+		return errRequestFailed
+	} else {
+		fmt.Println(resp.Status)
 	}
-	// delete success
-	err3 := dictionary.Delete(word)
-	if err3 != nil {
-		fmt.Println(err3)
-	}
-	fmt.Println("[delete success]")
-	// delete fail
-	err4 := dictionary.Delete(word)
-	if err4 != nil {
-		fmt.Println(err4)
-		fmt.Println("[delete fail]")
-	}
-	fmt.Println(dictionary)
+	return nil
 }
