@@ -1,12 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"os"
 	"strings"
 
 	"github.com/chrisgardner402/learngo/scrapper"
 	"github.com/labstack/echo/v4"
 )
+
+const fileName string = "jobs.csv"
 
 func main() {
 	e := echo.New()
@@ -20,7 +22,8 @@ func handleHome(c echo.Context) error {
 }
 
 func handleScrape(c echo.Context) error {
+	defer os.Remove(fileName)
 	term := strings.ToLower(scrapper.CleanString(c.FormValue("term")))
-	fmt.Println(term)
-	return nil
+	scrapper.Scrape(term)
+	return c.Attachment(fileName, fileName)
 }
